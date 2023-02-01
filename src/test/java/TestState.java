@@ -1,37 +1,46 @@
-import static io.restassured.RestAssured.*;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+import org.example.HelperPOJO.listOfState;
+import org.example.HelperPOJO.state;
+import org.example.HelperResponse.apiSetuHelper;
 import org.testng.annotations.Test;
-import org.example.Example;
-import org.example.State;
 
 public class TestState {
 
+    //Q1
     @Test
-    public static void StateCheck(){
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("https://cdn-api.co-vin.in/api/v2/admin/location/states");
+    public static void karnatakaStateIdTesting(){
+        apiSetuHelper temp = new apiSetuHelper();
+        listOfState e = temp.getAllState();
 
-        Example e = response.getBody().as(Example.class);
+        boolean existsKarnataka = false;
 
-        //Q1
-        for(State s: e.getStates()){
-
+        //check that karnataka is exists or not
+        for(state s: e.getStates()){
             if(s.getStateName().equals("Karnataka")){
-                Assert.assertEquals(s.getStateId(),16);
+                existsKarnataka = true;
+                assertEquals(s.getStateId(),16,"Karnataka State id has not matched");
             }
         }
+        assertEquals(existsKarnataka,true,"Karnataka has not existed in Data");
+    }
 
-        for(State s: e.getStates()){
+    //Q2
+    @Test
+    public static void checkAllStateId(){
+        apiSetuHelper temp = new apiSetuHelper();
+        listOfState e = temp.getAllState();
+
+        boolean allStatesHasId = true;
+
+        //check that karnataka is exists or not
+        for(state s: e.getStates()){
             if(s.getStateName() != null){
-                Assert.assertNotNull(s.getStateId());
+                if(s.getStateId()==null) {
+                    allStatesHasId = false;
+                    break;
+                }
             }
         }
-
-
-
+        assertEquals(allStatesHasId,true,"Some states has no State Id");
     }
 }

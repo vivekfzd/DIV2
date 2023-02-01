@@ -1,32 +1,28 @@
-import static io.restassured.RestAssured.*;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import org.example.District;
-import org.example.ListofDistrict;
-import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+import org.example.HelperPOJO.district;
+import org.example.HelperPOJO.listOfDistrict;
+import org.example.HelperResponse.apiSetuHelper;
 import org.testng.annotations.Test;
 
 public class TestDistrict {
 
     @Test
-    public static void StateCheck(){
-        Response response = given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get("https://cdn-api.co-vin.in/api/v2/admin/location/districts/16");
+    public static void testBangloreUrbanID(){
 
-        ListofDistrict d = response.getBody().as(ListofDistrict.class);
+        apiSetuHelper temp = new apiSetuHelper();
+        listOfDistrict d = temp.getAllDistrictFromSpecificState(16);
 
-        //Q1
-        for(District s: d.getDistricts()){
+        boolean extistBangaloreUrban = false;
 
+        //check that karnataka is exists or not
+        for(district s: d.getDistricts()){
             if(s.getDistrictName().equals("Bangalore Urban")){
-                Assert.assertEquals(s.getDistrictId(),265);
+                extistBangaloreUrban = true;
+                assertEquals(s.getDistrictId(),265,"Bangalore Urban district Id has not matched");
             }
-//            System.out.println(s.getDistrictName());
         }
-
-
-
+        assertEquals(extistBangaloreUrban,true,"Bangalore Urban has not existed in Data");
     }
+
+
 }
